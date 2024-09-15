@@ -11,7 +11,7 @@
   "author": "stantanasi",
   "license": "ISC",
   "dependencies": {
-    "mongoose": "^6.2.10"
+    "mongoose": "^8.0.3"
   },
   "devDependencies": {
     "@types/node": "^22.5.5",

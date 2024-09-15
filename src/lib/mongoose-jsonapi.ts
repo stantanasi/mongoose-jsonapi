@@ -1,4 +1,4 @@
-import { Document, FilterQuery, PopulateOptions, Schema, SchemaType, VirtualType } from 'mongoose';
+import { Document, FilterQuery, HydratedDocument, PopulateOptions, Schema, SchemaType, VirtualType } from 'mongoose';
 import { JsonApiBody, JsonApiResource } from '../types/jsonapi.types';
 import { JsonApiInstanceMethods, JsonApiModel, JsonApiQueryHelper } from '../types/mongoose-jsonapi.types';
 import UrlQuery from '../utils/url-query.utils';
@@ -49,7 +49,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
 
     return this.transform((doc) => {
       return doc?.get(relationship) ?? null;
-    });
+    }) as any;
   };
 
   schema.query.withJsonApi = function (query) {
@@ -389,16 +389,16 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
       ...this.schema.paths,
       ...this.schema.virtuals
     } as {
-      [key: string]: SchemaType | VirtualType
+      [key: string]: SchemaType | VirtualType<HydratedDocument<any>>
     })
       .map(([path, type]) => {
-        const isId = (type: SchemaType | VirtualType): boolean => {
+        const isId = (type: SchemaType | VirtualType<HydratedDocument<any>>): boolean => {
           return (type as any).path === '_id';
         }
-        const isAttribute = (type: SchemaType | VirtualType): boolean => {
+        const isAttribute = (type: SchemaType | VirtualType<HydratedDocument<any>>): boolean => {
           return !isId(type) && !isRelationship(type);
         }
-        const isRelationship = (type: SchemaType | VirtualType): boolean => {
+        const isRelationship = (type: SchemaType | VirtualType<HydratedDocument<any>>): boolean => {
           return !!(type as any).options?.ref || !!(type as any).options.type?.[0]?.ref ||
             !!(type as any).options?.refPath || !!(type as any).options.type?.[0]?.refPath;
         }
