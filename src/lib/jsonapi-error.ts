@@ -1,6 +1,37 @@
 import { Error as MongooseError } from 'mongoose';
 import { IJsonApiError, JsonApiBody } from "../types/jsonapi.types";
 
+export class JsonApiErrors extends Error {
+
+  errors: JsonApiError[];
+
+  get status(): number {
+    return +(this.errors
+      .find((error) => error.status !== undefined)
+      ?.status
+      ?? 500);
+  }
+
+  constructor(errors: JsonApiError[]) {
+    super();
+    this.errors = errors;
+  }
+
+  static from(err: Error): JsonApiErrors {
+    return new JsonApiErrors([
+      JsonApiError.from(err),
+    ]);
+  }
+
+  toJSON(): JsonApiBody {
+    const body: JsonApiBody = {
+      errors: this.errors.map((error) => error.toJSON()),
+    };
+
+    return body;
+  }
+}
+
 export class JsonApiError extends Error implements IJsonApiError {
 
   id?: string;
@@ -44,12 +75,8 @@ export class JsonApiError extends Error implements IJsonApiError {
     }
   }
 
-  toJSON(): JsonApiBody {
-    const body: JsonApiBody = {
-      errors: [],
-    };
-
-    body.errors?.push({
+  toJSON(): IJsonApiError {
+    return {
       id: this.id,
       links: this.links,
       status: this.status,
@@ -58,9 +85,7 @@ export class JsonApiError extends Error implements IJsonApiError {
       detail: this.detail,
       source: this.source,
       meta: this.meta,
-    });
-
-    return body;
+    };
   }
 
 
