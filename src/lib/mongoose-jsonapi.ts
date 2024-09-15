@@ -85,6 +85,15 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
                 index = acc2.push({
                   path: include,
                   populate: [],
+                  // // TODO: implement JSON:API Sparse Fieldsets (eg. fields[type]=....)
+                  // select: query.fields?.[type]
+                  //   ?.split(',')
+                  //   .reduce((acc, field) => {
+                  //     acc[field] = 1;
+                  //     return acc;
+                  //   }, {} as {
+                  //     [field: string]: 0 | 1;
+                  //   }),
                 }) - 1;
               }
 
@@ -93,6 +102,16 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
 
             return acc;
           }, [] as PopulateOptions[]),
+
+        // // TODO: implement JSON:API Sparse Fieldsets (eg. fields[type]=....)
+        // select: query.fields?.[type]
+        //   ?.split(',')
+        //   .reduce((acc, field) => {
+        //     acc[field] = 1;
+        //     return acc;
+        //   }, {} as {
+        //     [field: string]: 0 | 1;
+        //   }),
 
         options: {
           // Pagination limit
@@ -130,6 +149,15 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
                 index = acc2.push({
                   path: include,
                   populate: [],
+                  // // TODO: implement JSON:API Sparse Fieldsets (eg. fields[type]=....)
+                  // select: query.fields?.[type]
+                  //   ?.split(',')
+                  //   .reduce((acc, field) => {
+                  //     acc[field] = 1;
+                  //     return acc;
+                  //   }, {} as {
+                  //     [field: string]: 0 | 1;
+                  //   }),
                 }) - 1;
               }
 
@@ -142,7 +170,14 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
 
       // Sparse Fieldsets
       if (query.fields) {
-        // TODO: implement JSON:API Sparse Fieldsets (eg. fields[type]=....)
+        this.select(query.fields[options.type]
+          ?.split(',')
+          .reduce((acc, field) => {
+            acc[field] = 1;
+            return acc;
+          }, {} as {
+            [field: string]: 0 | 1;
+          }));
       }
 
       // Sorting
@@ -158,7 +193,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
             return acc;
           }, {} as {
             [field: string]: -1 | 1;
-          }))
+          }));
       }
 
 
