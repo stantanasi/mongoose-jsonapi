@@ -42,6 +42,17 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
     return new this(doc);
   };
 
+  schema.query.getRelationship = function (relationship) {
+    this.setOptions({
+      getRelationship: relationship,
+    });
+
+    this.populate(relationship);
+
+    return this.transform((doc) => {
+      return doc?.get(relationship) ?? null;
+    });
+  };
 
   schema.query.withJsonApi = function (query) {
     // Inclusion of Related Resources

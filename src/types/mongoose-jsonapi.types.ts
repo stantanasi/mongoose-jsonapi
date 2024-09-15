@@ -18,6 +18,11 @@ export interface JsonApiInstanceMethods extends Document {
 }
 
 export interface JsonApiQueryHelper {
+  getRelationship: <ResultType = any, DocType extends JsonApiInstanceMethods & Document = any>(
+    this: QueryWithHelpers<DocType | null, DocType, JsonApiQueryHelper>,
+    relationship: string,
+  ) => QueryWithHelpers<ResultType, DocType, JsonApiQueryHelper>;
+
   withJsonApi: <DocType extends JsonApiInstanceMethods>(
     this: QueryWithHelpers<DocType | DocType[] | null, DocType, JsonApiQueryHelper>,
     query: JsonApiQueryParams,
