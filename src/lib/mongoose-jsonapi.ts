@@ -2,6 +2,7 @@ import { Document, FilterQuery, HydratedDocument, PopulateOptions, Schema, Schem
 import { JsonApiBody, JsonApiResource } from '../types/jsonapi.types';
 import { JsonApiInstanceMethods, JsonApiModel, JsonApiQueryHelper } from '../types/mongoose-jsonapi.types';
 import UrlQuery from '../utils/url-query.utils';
+import { JsonApiError } from './jsonapi-error';
 
 export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>>(
   _schema: Schema<DocType, M>,
@@ -237,7 +238,9 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
   schema.query.toJsonApi = function (opts) {
     // Throw an error if no document has been found
     if ((this as any).op === 'findOne') {
-      this.orFail();
+      this.orFail(() => {
+        throw new JsonApiError.ResourceNotFoundError(this.getFilter()._id);
+      });
     }
 
     return this.transform((doc) => {
