@@ -55,81 +55,147 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
   };
 
   schema.query.withJsonApi = function (query) {
-    // Inclusion of Related Resources
-    if (query.include) {
-      this.populate(query.include
-        .split(',')
-        .map(includes => includes.split('.'))
-        .reduce((acc, includes) => {
-          includes.reduce((acc2, include) => {
-            let index = acc2.findIndex(relationship => relationship.path === include);
-            if (index === -1) {
-              index = acc2.push({
-                path: include,
-                populate: [],
-              }) - 1;
-            }
+    if (this.getOptions().getRelationship) {
+      this.populate({
+        path: this.getOptions().getRelationship,
 
-            return acc2[index].populate as PopulateOptions[];
-          }, acc);
+        // Filtering
+        match: query.filter ? {
+          $and: Object.entries(query.filter)
+            .map(([field, values]) => {
+              return {
+                $or: values.split(',')
+                  .map((value: string) => {
+                    if (options?.filter?.[field]) {
+                      return options.filter[field](value);
+                    } else {
+                      return { [field]: value };
+                    }
+                  })
+              };
+            })
+        } : undefined,
 
-          return acc;
-        }, [] as PopulateOptions[]));
-    }
+        // Inclusion of Related Resources
+        populate: query.include
+          ?.split(',')
+          .map(includes => includes.split('.'))
+          .reduce((acc, includes) => {
+            includes.reduce((acc2, include) => {
+              let index = acc2.findIndex(relationship => relationship.path === include);
+              if (index === -1) {
+                index = acc2.push({
+                  path: include,
+                  populate: [],
+                }) - 1;
+              }
 
-    // Sparse Fieldsets
-    if (query.fields) {
-      // TODO: implement JSON:API Sparse Fieldsets (eg. fields[type]=....)
-    }
+              return acc2[index].populate as PopulateOptions[];
+            }, acc);
 
-    // Sorting
-    if (query.sort) {
-      this.sort(query.sort
-        .split(',')
-        .reduce((acc, sort) => {
-          if (sort.charAt(0) === '-') {
-            acc[sort.slice(1)] = -1;
-          } else {
-            acc[sort] = 1;
-          }
-          return acc;
-        }, {} as {
-          [field: string]: -1 | 1;
-        }))
-    }
+            return acc;
+          }, [] as PopulateOptions[]),
 
+        options: {
+          // Pagination limit
+          limit: +(query.page?.limit ?? 10),
 
-    // Pagination limit
-    if (query.page?.limit) {
-      this.limit(+query.page?.limit);
-    } else {
-      this.limit(10);
-    }
+          // Pagination offset
+          skip: +(query.page?.offset ?? 0),
 
-    // Pagination offset
-    if (query.page?.offset) {
-      this.skip(+query.page?.offset);
-    } else {
-      this.skip(0);
-    }
-
-    // Filtering
-    if (query.filter) {
-      this.merge({
-        $and: Object.entries(query.filter)
-          .map(([field, values]) => {
-            return {
-              $or: values.split(',')
-                .map((value: string) => {
-                  if (options?.filter?.[field]) {
-                    return options.filter[field](value);
-                  } else {
-                    return { [field]: value };
-                  }
-                })
-            };
-          })
+          // Sorting
+          sort: query.sort
+            ?.split(',')
+            .reduce((acc, sort) => {
+              if (sort.charAt(0) === '-') {
+                acc[sort.slice(1)] = -1;
+              } else {
+                acc[sort] = 1;
+              }
+              return acc;
+            }, {} as {
+              [field: string]: -1 | 1;
+            }),
+        },
       });
+
+    } else {
+      // Inclusion of Related Resources
+      if (query.include) {
+        this.populate(query.include
+          .split(',')
+          .map(includes => includes.split('.'))
+          .reduce((acc, includes) => {
+            includes.reduce((acc2, include) => {
+              let index = acc2.findIndex(relationship => relationship.path === include);
+              if (index === -1) {
+                index = acc2.push({
+                  path: include,
+                  populate: [],
+                }) - 1;
+              }
+
+              return acc2[index].populate as PopulateOptions[];
+            }, acc);
+
+            return acc;
+          }, [] as PopulateOptions[]));
+      }
+
+      // Sparse Fieldsets
+      if (query.fields) {
+        // TODO: implement JSON:API Sparse Fieldsets (eg. fields[type]=....)
+      }
+
+      // Sorting
+      if (query.sort) {
+        this.sort(query.sort
+          .split(',')
+          .reduce((acc, sort) => {
+            if (sort.charAt(0) === '-') {
+              acc[sort.slice(1)] = -1;
+            } else {
+              acc[sort] = 1;
+            }
+            return acc;
+          }, {} as {
+            [field: string]: -1 | 1;
+          }))
+      }
+
+
+      // Pagination limit
+      if (query.page?.limit) {
+        this.limit(+query.page?.limit);
+      } else {
+        this.limit(10);
+      }
+
+      // Pagination offset
+      if (query.page?.offset) {
+        this.skip(+query.page?.offset);
+      } else {
+        this.skip(0);
+      }
+
+      // Filtering
+      if (query.filter) {
+        this.merge({
+          $and: Object.entries(query.filter)
+            .map(([field, values]) => {
+              return {
+                $or: values.split(',')
+                  .map((value: string) => {
+                    if (options?.filter?.[field]) {
+                      return options.filter[field](value);
+                    } else {
+                      return { [field]: value };
+                    }
+                  })
+              };
+            })
+        });
+      }
     }
 
     return this;
