@@ -29,10 +29,10 @@ export interface JsonApiBody {
     next?: string;
     last?: string;
   };
-  errors?: JsonApiError[];
+  errors?: IJsonApiError[];
 }
 
-export interface JsonApiError {
+export interface IJsonApiError {
   id?: string;
   links?: {
     about?: string;
@@ -43,7 +43,7 @@ export interface JsonApiError {
   detail?: string;
   source?: {
     pointer?: string;
-    parameter: string;
+    parameter?: string;
   };
   meta?: any;
 }
