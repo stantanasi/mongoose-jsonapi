@@ -10,6 +10,9 @@
   "repository": "https://github.com/stantanasi/mongoose-jsonapi",
   "author": "stantanasi",
   "license": "ISC",
+  "dependencies": {
+    "mongoose": "^6.2.10"
+  },
   "devDependencies": {
     "@types/node": "^22.5.5",
     "typescript": "^5.6.2"
