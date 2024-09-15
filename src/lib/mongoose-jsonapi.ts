@@ -1,4 +1,4 @@
-import { PopulateOptions, Schema, SchemaType, VirtualType } from 'mongoose';
+import { Document, PopulateOptions, Schema, SchemaType, VirtualType } from 'mongoose';
 import { JsonApiBody, JsonApiResource } from '../types/jsonapi.types';
 import { JsonApiInstanceMethods, JsonApiModel, JsonApiQueryHelper } from '../types/mongoose-jsonapi.types';
 import UrlQuery from '../utils/url-query.utils';
@@ -425,6 +425,24 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
   };
 
   schema.methods.merge = function (...sources) {
+    sources = sources.map((source) => {
+      if (source instanceof Document) {
+        return source.directModifiedPaths().reduce((acc, cur) => {
+          cur.split('.').reduce((obj, path, i, arr) => {
+            if (i !== arr.length - 1) {
+              return obj[path] = {};
+            } else {
+              return obj[path] = source.get(cur);
+            }
+          }, acc);
+          return acc;
+        }, {} as any);
+
+      } else {
+        return source;
+      }
+    });
+
     return Object.assign(this, ...sources);
-  }
+  };
 }
