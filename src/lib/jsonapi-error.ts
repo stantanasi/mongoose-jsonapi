@@ -92,4 +92,14 @@ export class JsonApiError extends Error implements IJsonApiError {
       })
     }
   }
+
+  static MissingAttribute = class extends JsonApiError {
+    constructor(attribute: string) {
+      super({
+        status: '400',
+        title: 'Missing attribute',
+        detail: `Missing required attribute: ${attribute}`,
+      })
+    }
+  }
 }
