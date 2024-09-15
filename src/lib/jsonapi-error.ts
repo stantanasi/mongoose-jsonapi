@@ -1,3 +1,4 @@
+import { Error as MongooseError } from 'mongoose';
 import { IJsonApiError, JsonApiBody } from "../types/jsonapi.types";
 
 export class JsonApiError extends Error implements IJsonApiError {
@@ -22,12 +23,25 @@ export class JsonApiError extends Error implements IJsonApiError {
   }
 
   static from(err: Error): JsonApiError {
-    return new JsonApiError({
-      status: '500',
-      title: err.name,
-      detail: err.message,
-      meta: err.stack,
-    });
+    if (err instanceof MongooseError.DocumentNotFoundError) {
+      return new JsonApiError({
+        status: '404',
+        title: 'Resource not Found',
+        detail: err.message,
+        meta: {
+          stack: err.stack,
+        },
+      });
+    } else {
+      return new JsonApiError({
+        status: '500',
+        title: err.name,
+        detail: err.message,
+        meta: {
+          stack: err.stack,
+        },
+      });
+    }
   }
 
   toJSON(): JsonApiBody {
