@@ -63,7 +63,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
           }, acc);
 
           return acc;
-        }, [] as PopulateOptions[]))
+        }, [] as PopulateOptions[]));
     }
 
     // Sparse Fieldsets
@@ -221,12 +221,6 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
 
 
   schema.methods.toJsonApi = function (opts) {
-    const body: JsonApiBody = {
-      jsonapi: {
-        version: '1.0',
-      }
-    };
-
     const obj: any = this.toObject();
 
     const type = options?.type;

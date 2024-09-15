@@ -2,7 +2,7 @@ import { Document, HydratedDocument, Model, QueryWithHelpers } from 'mongoose';
 import { JsonApiBody, JsonApiQueryParams, JsonApiResource } from './jsonapi.types';
 
 export interface JsonApiModel<T> extends Model<T, JsonApiQueryHelper, JsonApiInstanceMethods> {
-  fromJsonApi(body: any): HydratedDocument<T, JsonApiInstanceMethods>;
+  fromJsonApi: (body: any) => HydratedDocument<T, JsonApiInstanceMethods>;
 }
 
 export interface JsonApiInstanceMethods extends Document {
@@ -18,13 +18,13 @@ export interface JsonApiInstanceMethods extends Document {
 }
 
 export interface JsonApiQueryHelper {
-  withJsonApi: <ResultType extends DocType | DocType[] | null, DocType extends JsonApiInstanceMethods>(
-    this: QueryWithHelpers<ResultType, DocType, JsonApiQueryHelper>,
+  withJsonApi: <DocType extends JsonApiInstanceMethods>(
+    this: QueryWithHelpers<DocType | DocType[] | null, DocType, JsonApiQueryHelper>,
     query: JsonApiQueryParams,
   ) => this;
 
-  toJsonApi: <ResultType extends DocType | DocType[] | null, DocType extends JsonApiInstanceMethods & Document>(
-    this: QueryWithHelpers<ResultType, DocType, JsonApiQueryHelper>,
+  toJsonApi: <DocType extends JsonApiInstanceMethods & Document>(
+    this: QueryWithHelpers<DocType | DocType[] | null, DocType, JsonApiQueryHelper>,
     opts: {
       baseUrl: string;
       meta?: any;
