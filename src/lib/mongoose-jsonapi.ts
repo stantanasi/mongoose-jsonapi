@@ -104,10 +104,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
 
     // Filtering
     if (query.filter) {
-      // TODO: JSON:API Filtering
-      // this.merge({
-      // })
-      this.find({
+      this.merge({
         $and: Object.entries(query.filter)
           .map(([field, values]) => {
             return {
@@ -121,7 +118,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
                 })
             };
           })
-      })
+      });
     }
 
     return this;
