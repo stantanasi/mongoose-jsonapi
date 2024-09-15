@@ -1,18 +1,16 @@
-import { Document, PopulateOptions, Schema, SchemaType, VirtualType } from 'mongoose';
+import { Document, FilterQuery, PopulateOptions, Schema, SchemaType, VirtualType } from 'mongoose';
 import { JsonApiBody, JsonApiResource } from '../types/jsonapi.types';
 import { JsonApiInstanceMethods, JsonApiModel, JsonApiQueryHelper } from '../types/mongoose-jsonapi.types';
 import UrlQuery from '../utils/url-query.utils';
 
-export interface JsonApiPluginOptions {
-  type: string;
-  filter?: {
-    [field: string]: (value: string) => any;
-  };
-}
-
 export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>>(
   _schema: Schema<DocType, M>,
-  options?: JsonApiPluginOptions,
+  options: {
+    type: string;
+    filter?: {
+      [field: string]: (value: string) => FilterQuery<DocType>;
+    };
+  },
 ): void {
   const schema = _schema as Schema<DocType, M, JsonApiInstanceMethods, JsonApiQueryHelper>;
 
@@ -66,7 +64,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
               return {
                 $or: values.split(',')
                   .map((value: string) => {
-                    if (options?.filter?.[field]) {
+                    if (options.filter?.[field]) {
                       return options.filter[field](value);
                     } else {
                       return { [field]: value };
@@ -186,10 +184,10 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
               return {
                 $or: values.split(',')
                   .map((value: string) => {
-                    if (options?.filter?.[field]) {
+                    if (options.filter?.[field]) {
                       return options.filter[field](value);
                     } else {
-                      return { [field]: value };
+                      return { [field]: value } as any;
                     }
                   })
               };
@@ -333,7 +331,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
 
     const obj: any = this.toObject();
 
-    const type = options?.type;
+    const type = options.type;
     const id = this._id?.toString();
 
     if (!type) {
