@@ -11,7 +11,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
       [field: string]: (value: string) => FilterQuery<DocType>;
     };
   },
-): void {
+) {
   const schema = _schema as Schema<DocType, M, JsonApiInstanceMethods, JsonApiQueryHelper>;
 
 
