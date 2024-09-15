@@ -37,4 +37,34 @@ export class JsonApiError extends Error implements IJsonApiError {
       ],
     };
   }
+
+
+  static PermissionDenied = class extends JsonApiError {
+    constructor() {
+      super({
+        status: '403',
+        title: 'Permission denied',
+      });
+    }
+  }
+
+  static RouteNotFoundError = class extends JsonApiError {
+    constructor(path: string) {
+      super({
+        status: '404',
+        title: 'Route not found',
+        detail: `The path '${path}' does not exist.`,
+      })
+    }
+  }
+
+  static ResourceNotFoundError = class extends JsonApiError {
+    constructor(id: any) {
+      super({
+        status: '404',
+        title: 'Resource not Found',
+        detail: `The resource identified by ${id} could not be found`,
+      })
+    }
+  }
 }
