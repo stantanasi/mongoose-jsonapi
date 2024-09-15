@@ -202,6 +202,11 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
   };
 
   schema.query.toJsonApi = function (opts) {
+    // Throw an error if no document has been found
+    if ((this as any).op === 'findOne') {
+      this.orFail();
+    }
+
     return this.transform((doc) => {
       const body: JsonApiBody = {
         jsonapi: {

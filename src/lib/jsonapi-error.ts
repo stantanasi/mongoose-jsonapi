@@ -17,7 +17,7 @@ export class JsonApiError extends Error implements IJsonApiError {
   };
   meta?: any;
 
-  constructor(public obj: IJsonApiError) {
+  constructor(obj: IJsonApiError) {
     super();
     Object.assign(this, obj);
   }
@@ -45,11 +45,22 @@ export class JsonApiError extends Error implements IJsonApiError {
   }
 
   toJSON(): JsonApiBody {
-    return {
-      errors: [
-        this.obj,
-      ],
+    const body: JsonApiBody = {
+      errors: [],
     };
+
+    body.errors?.push({
+      id: this.id,
+      links: this.links,
+      status: this.status,
+      code: this.code,
+      title: this.title,
+      detail: this.detail,
+      source: this.source,
+      meta: this.meta,
+    });
+
+    return body;
   }
 
 
