@@ -258,7 +258,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
       if (this.getOptions().getRelationship) {
         const relationship = this.getOptions().getRelationship;
 
-        count = await this.model.findOne(this.getQuery())
+        count = await this.model.findOne(this.getFilter())
           .populate({
             path: relationship,
             match: (this.mongooseOptions().populate as any)[relationship].match,
@@ -275,7 +275,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
           });
 
       } else {
-        count = await this.model.countDocuments(this.getQuery());
+        count = await this.model.countDocuments(this.getFilter());
       }
 
       const limit = +(opts.query.page?.limit ?? 10);
