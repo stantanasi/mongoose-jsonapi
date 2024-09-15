@@ -11,10 +11,7 @@ export interface JsonApiInstanceMethods extends Document {
       baseUrl: string;
       meta?: any;
     },
-  ) => {
-    data: JsonApiResource;
-    included: JsonApiResource[];
-  }
+  ) => JsonApiBody;
 }
 
 export interface JsonApiQueryHelper {
