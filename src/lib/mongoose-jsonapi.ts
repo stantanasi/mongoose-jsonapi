@@ -246,7 +246,29 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
     return this.transform(async (body) => {
       const url = opts.url.split("?").shift() ?? '/';
 
-      const count = await this.model.countDocuments(this.getQuery());
+      let count = 0;
+      if (this.getOptions().getRelationship) {
+        const relationship = this.getOptions().getRelationship;
+
+        count = await this.model.findOne(this.getQuery())
+          .populate({
+            path: relationship,
+            match: (this.mongooseOptions().populate as any)[relationship].match,
+            options: {
+              limit: 0,
+            },
+          })
+          .then((doc) => {
+            if (Array.isArray(doc?.get(relationship))) {
+              return doc?.get(relationship).length;
+            } else {
+              return 0;
+            }
+          });
+
+      } else {
+        count = await this.model.countDocuments(this.getQuery());
+      }
 
       const limit = +(opts.query.page?.limit ?? 10);
       const offset = +(opts.query.page?.offset ?? 0);
