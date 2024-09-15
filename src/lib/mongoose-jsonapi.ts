@@ -415,4 +415,8 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
 
     return body;
   };
+
+  schema.methods.merge = function (...sources) {
+    return Object.assign(this, ...sources);
+  }
 }

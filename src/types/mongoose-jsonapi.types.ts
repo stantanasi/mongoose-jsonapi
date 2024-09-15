@@ -12,6 +12,8 @@ export interface JsonApiInstanceMethods extends Document {
       meta?: any;
     },
   ) => JsonApiBody;
+
+  merge: (...sources: any[]) => this;
 }
 
 export interface JsonApiQueryHelper {
