@@ -69,7 +69,7 @@ export interface JsonApiResource {
         self?: string;
         related?: string;
       };
-      data?: JsonApiIdentifier | JsonApiIdentifier[];
+      data?: JsonApiIdentifier | JsonApiIdentifier[] | null;
       meta?: any;
     }
   };
