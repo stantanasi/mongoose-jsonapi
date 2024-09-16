@@ -2,18 +2,18 @@ import { Document, HydratedDocument, Model, QueryWithHelpers, Types } from 'mong
 import { JsonApiBody, JsonApiQueryParams } from './jsonapi.types';
 
 export interface JsonApiModel<T> extends Model<T, JsonApiQueryHelper, JsonApiInstanceMethods> {
-  fromJsonApi: (body: any) => HydratedDocument<T, JsonApiInstanceMethods>;
+  fromJsonApi: (body: JsonApiBody) => HydratedDocument<T, JsonApiInstanceMethods>;
 }
 
 export interface JsonApiInstanceMethods extends Document {
   toJsonApi: (
     opts: {
       baseUrl: string;
-      meta?: any;
+      meta?: Record<string, any>;
     },
   ) => JsonApiBody;
 
-  merge: (...sources: any[]) => this;
+  merge: (...sources: (Record<string, any> | Document)[]) => this;
 }
 
 export interface JsonApiQueryHelper {
