@@ -1,6 +1,7 @@
+import { JsonApiError, JsonApiErrors } from '@stantanasi/mongoose-jsonapi'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import express from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import { connect } from 'mongoose'
 
 dotenv.config()
@@ -20,6 +21,20 @@ app.use(async (_req, _res, next) => {
     next()
   } catch (err) {
     next(err)
+  }
+})
+
+// Error handling
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  console.error(err)
+  if (err instanceof JsonApiErrors) {
+    res.status(err.status).json(err)
+  } else if (err instanceof JsonApiError) {
+    const errors = new JsonApiErrors([err])
+    res.status(errors.status).json(errors)
+  } else {
+    const errors = JsonApiErrors.from(err)
+    res.status(errors.status).json(errors)
   }
 })
 
