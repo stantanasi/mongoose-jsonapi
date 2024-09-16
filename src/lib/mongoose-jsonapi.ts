@@ -27,7 +27,7 @@ export interface JsonApiQueryHelper {
     DocType extends JsonApiInstanceMethods,
     THelpers extends JsonApiQueryHelper,
     TInstanceMethods extends JsonApiInstanceMethods,
-    ResultType extends Exclude<RawDocType[P], Types.ObjectId | Types.ObjectId[] | undefined>,
+    ResultType extends Exclude<RawDocType[P], string | string[] | Types.ObjectId | Types.ObjectId[] | undefined>,
     ResultDocType extends JsonApiInstanceMethods,
     ResultTHelpers extends JsonApiQueryHelper,
     ResultTInstanceMethods extends JsonApiInstanceMethods,
