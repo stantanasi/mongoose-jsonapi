@@ -1,10 +1,15 @@
 import MongooseJsonApi, { JsonApiInstanceMethods, JsonApiModel, JsonApiQueryHelper } from '@stantanasi/mongoose-jsonapi'
 import { HydratedDocument, model, Model, Schema, Types } from 'mongoose'
+import { TArticle } from './article.model'
+import { TPeople } from './people.model'
 
 export interface IComment {
   _id: Types.ObjectId
 
   body: string
+
+  article: Types.ObjectId | TArticle
+  author: Types.ObjectId | TPeople
 
   createdAt: Date
   updatedAt: Date
@@ -19,6 +24,19 @@ export interface CommentModel extends Model<IComment, CommentQueryHelper, Commen
 export const CommentSchema = new Schema<IComment, CommentModel & JsonApiModel<IComment>, CommentInstanceMethods, CommentQueryHelper>({
   body: {
     type: String,
+    required: true,
+  },
+
+
+  article: {
+    type: Schema.Types.ObjectId,
+    ref: 'Author',
+    required: true,
+  },
+
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'Author',
     required: true,
   },
 }, {

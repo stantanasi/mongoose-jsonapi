@@ -1,5 +1,7 @@
 import MongooseJsonApi, { JsonApiInstanceMethods, JsonApiModel, JsonApiQueryHelper } from '@stantanasi/mongoose-jsonapi'
 import { HydratedDocument, model, Model, Schema, Types } from 'mongoose'
+import { TArticle } from './article.model'
+import { TComment } from './comment.model'
 
 export interface IPeople {
   _id: Types.ObjectId
@@ -7,6 +9,9 @@ export interface IPeople {
   firstName: string
   lastName: string
   twitter: string | null
+
+  articles?: TArticle[]
+  comments?: TComment[]
 
   createdAt: Date
   updatedAt: Date
@@ -40,6 +45,18 @@ export const PeopleSchema = new Schema<IPeople, PeopleModel & JsonApiModel<IPeop
   minimize: false,
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
+})
+
+PeopleSchema.virtual('articles', {
+  ref: 'Article',
+  localField: '_id',
+  foreignField: 'author',
+})
+
+PeopleSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'author',
 })
 
 

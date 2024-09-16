@@ -1,10 +1,15 @@
 import MongooseJsonApi, { JsonApiInstanceMethods, JsonApiModel, JsonApiQueryHelper } from '@stantanasi/mongoose-jsonapi'
 import { HydratedDocument, model, Model, Schema, Types } from 'mongoose'
+import { TComment } from './comment.model'
+import { TPeople } from './people.model'
 
 export interface IArticle {
   _id: Types.ObjectId
 
   title: string
+
+  author: Types.ObjectId | TPeople
+  comments?: TComment[]
 
   createdAt: Date
   updatedAt: Date
@@ -21,6 +26,13 @@ export const ArticleSchema = new Schema<IArticle, ArticleModel & JsonApiModel<IA
     type: String,
     required: true,
   },
+
+
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'People',
+    required: true,
+  },
 }, {
   id: false,
   versionKey: false,
@@ -28,6 +40,12 @@ export const ArticleSchema = new Schema<IArticle, ArticleModel & JsonApiModel<IA
   minimize: false,
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
+})
+
+ArticleSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'article',
 })
 
 
