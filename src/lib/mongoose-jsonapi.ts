@@ -4,7 +4,10 @@ import UrlQuery from '../utils/url-query.utils';
 import { JsonApiError } from './jsonapi-error';
 
 export interface JsonApiModel<T> extends Model<T, JsonApiQueryHelper, JsonApiInstanceMethods> {
-  fromJsonApi: (body: JsonApiBody) => HydratedDocument<T, JsonApiInstanceMethods>;
+  fromJsonApi: (
+    this: JsonApiModel<T>,
+    body: JsonApiBody,
+  ) => HydratedDocument<T, JsonApiInstanceMethods>;
 }
 
 export interface JsonApiInstanceMethods extends Document {
@@ -97,7 +100,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
     };
   },
 ) {
-  const schema = _schema as Schema<DocType, M, JsonApiInstanceMethods, JsonApiQueryHelper>;
+  const schema = _schema as Schema<DocType, M, JsonApiInstanceMethods, JsonApiQueryHelper, {}, JsonApiModel<DocType>>;
 
 
   schema.statics.fromJsonApi = function (body) {
