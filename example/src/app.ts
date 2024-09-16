@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express, { NextFunction, Request, Response } from 'express'
 import { connect } from 'mongoose'
+import articleRoutes from './routes/article.routes'
 
 dotenv.config()
 
@@ -23,6 +24,8 @@ app.use(async (_req, _res, next) => {
     next(err)
   }
 })
+
+app.use('/articles', articleRoutes)
 
 app.all('*', (req, _res) => {
   throw new JsonApiError.RouteNotFoundError(req.path)
