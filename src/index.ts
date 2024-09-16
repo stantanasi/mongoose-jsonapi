@@ -1,4 +1,9 @@
-export { default } from './lib/mongoose-jsonapi';
+export {
+  JsonApiInstanceMethods,
+  JsonApiModel,
+  JsonApiQueryHelper,
+  default
+} from './lib/mongoose-jsonapi';
 
 export { JsonApiError, JsonApiErrors } from './lib/jsonapi-error';
 
@@ -7,11 +12,6 @@ export {
   JsonApiBody,
   JsonApiIdentifier,
   JsonApiQueryParams,
-  JsonApiResource,
+  JsonApiResource
 } from './types/jsonapi.types';
 
-export {
-  JsonApiInstanceMethods,
-  JsonApiModel,
-  JsonApiQueryHelper,
-} from './types/mongoose-jsonapi.types';

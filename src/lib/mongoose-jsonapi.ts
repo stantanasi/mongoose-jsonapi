@@ -1,8 +1,92 @@
-import { Document, FilterQuery, HydratedDocument, PopulateOptions, Schema, SchemaType, VirtualType } from 'mongoose';
-import { JsonApiBody, JsonApiResource } from '../types/jsonapi.types';
-import { JsonApiInstanceMethods, JsonApiModel, JsonApiQueryHelper } from '../types/mongoose-jsonapi.types';
+import { Document, FilterQuery, HydratedDocument, Model, PopulateOptions, QueryWithHelpers, Schema, SchemaType, Types, VirtualType } from 'mongoose';
+import { JsonApiBody, JsonApiQueryParams, JsonApiResource } from '../types/jsonapi.types';
 import UrlQuery from '../utils/url-query.utils';
 import { JsonApiError } from './jsonapi-error';
+
+export interface JsonApiModel<T> extends Model<T, JsonApiQueryHelper, JsonApiInstanceMethods> {
+  fromJsonApi: (body: JsonApiBody) => HydratedDocument<T, JsonApiInstanceMethods>;
+}
+
+export interface JsonApiInstanceMethods extends Document {
+  toJsonApi: (
+    opts: {
+      baseUrl: string;
+      meta?: Record<string, any>;
+    },
+  ) => JsonApiBody;
+
+  merge: (...sources: (Record<string, any> | Document)[]) => this;
+}
+
+export interface JsonApiQueryHelper {
+  getRelationship: <
+    P extends keyof RawDocType,
+    DocType extends JsonApiInstanceMethods,
+    THelpers extends JsonApiQueryHelper,
+    TInstanceMethods extends JsonApiInstanceMethods,
+    ResultType extends Exclude<RawDocType[P], Types.ObjectId | Types.ObjectId[] | undefined>,
+    ResultDocType extends JsonApiInstanceMethods,
+    ResultTHelpers extends JsonApiQueryHelper,
+    ResultTInstanceMethods extends JsonApiInstanceMethods,
+    RawDocType = DocType,
+    QueryOp = 'find',
+    ResultRawDocType = ResultDocType,
+    ResultQueryOp = 'find',
+  >(
+    this: QueryWithHelpers<DocType | null, DocType, THelpers, RawDocType, QueryOp, TInstanceMethods>,
+    relationship: P,
+  ) => QueryWithHelpers<
+    ResultType,
+    ResultDocType,
+    ResultTHelpers,
+    ResultRawDocType,
+    ResultQueryOp,
+    ResultTInstanceMethods
+  >;
+
+  withJsonApi: <
+    ResultType extends DocType | DocType[] | null,
+    DocType extends JsonApiInstanceMethods,
+    THelpers extends JsonApiQueryHelper,
+    TInstanceMethods extends JsonApiInstanceMethods,
+    RawDocType = DocType,
+    QueryOp = 'find',
+  >(
+    this: QueryWithHelpers<ResultType, DocType, THelpers, RawDocType, QueryOp, TInstanceMethods>,
+    query: JsonApiQueryParams,
+  ) => this;
+
+  toJsonApi: <
+    ResultType extends DocType | DocType[] | null,
+    DocType extends JsonApiInstanceMethods,
+    THelpers extends JsonApiQueryHelper,
+    TInstanceMethods extends JsonApiInstanceMethods,
+    RawDocType = DocType,
+    QueryOp = 'find',
+  >(
+    this: QueryWithHelpers<ResultType, DocType, THelpers, RawDocType, QueryOp, TInstanceMethods>,
+    opts: {
+      baseUrl: string;
+      meta?: any;
+    },
+  ) => QueryWithHelpers<JsonApiBody, DocType, THelpers, RawDocType, QueryOp, TInstanceMethods>;
+
+  paginate: <
+    ResultType extends JsonApiBody,
+    DocType extends JsonApiInstanceMethods,
+    THelpers extends JsonApiQueryHelper,
+    TInstanceMethods extends JsonApiInstanceMethods,
+    RawDocType = DocType,
+    QueryOp = 'find',
+  >(
+    this: QueryWithHelpers<ResultType, DocType, THelpers, RawDocType, QueryOp, TInstanceMethods>,
+    opts: {
+      url: string;
+      query: JsonApiQueryParams;
+    },
+  ) => this;
+}
+
 
 export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>>(
   _schema: Schema<DocType, M>,
