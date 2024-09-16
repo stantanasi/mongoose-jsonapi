@@ -24,6 +24,10 @@ app.use(async (_req, _res, next) => {
   }
 })
 
+app.all('*', (req, _res) => {
+  throw new JsonApiError.RouteNotFoundError(req.path)
+})
+
 // Error handling
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err)
