@@ -46,7 +46,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
       getRelationship: relationship,
     });
 
-    this.populate(relationship);
+    this.populate(relationship as string);
 
     return this.transform((doc) => {
       return doc?.get(relationship) ?? null;
