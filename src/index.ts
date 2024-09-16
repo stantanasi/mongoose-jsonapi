@@ -3,9 +3,9 @@ export {
   JsonApiModel,
   JsonApiQueryHelper,
   default
-} from './lib/mongoose-jsonapi';
+} from './lib/mongoose-jsonapi'
 
-export { JsonApiError, JsonApiErrors } from './lib/jsonapi-error';
+export { JsonApiError, JsonApiErrors } from './lib/jsonapi-error'
 
 export {
   IJsonApiError,
@@ -13,5 +13,5 @@ export {
   JsonApiIdentifier,
   JsonApiQueryParams,
   JsonApiResource
-} from './types/jsonapi.types';
+} from './types/jsonapi.types'
 

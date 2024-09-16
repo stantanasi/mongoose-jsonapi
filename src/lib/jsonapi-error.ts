@@ -1,64 +1,64 @@
-import { Error as MongooseError } from 'mongoose';
-import { IJsonApiError, JsonApiBody } from "../types/jsonapi.types";
+import { Error as MongooseError } from 'mongoose'
+import { IJsonApiError, JsonApiBody } from '../types/jsonapi.types'
 
 export class JsonApiErrors extends Error {
 
-  errors: JsonApiError[];
+  errors: JsonApiError[]
 
   get status(): number {
     return +(this.errors
       .find((error) => error.status !== undefined)
       ?.status
-      ?? 500);
+      ?? 500)
   }
 
   constructor(errors: JsonApiError[]) {
-    super();
-    this.errors = errors;
+    super()
+    this.errors = errors
   }
 
   static from(err: Error): JsonApiErrors {
     if (err instanceof MongooseError.ValidationError) {
       return new JsonApiErrors(
         Object.values(err.errors).map((err) => {
-          return JsonApiError.from(err);
+          return JsonApiError.from(err)
         })
-      );
+      )
     } else {
       return new JsonApiErrors([
         JsonApiError.from(err),
-      ]);
+      ])
     }
   }
 
   toJSON(): JsonApiBody {
     const body: JsonApiBody = {
       errors: this.errors.map((error) => error.toJSON()),
-    };
+    }
 
-    return body;
+    return body
   }
 }
 
 export class JsonApiError extends Error implements IJsonApiError {
 
-  id?: string;
+  id?: string
   links?: {
-    about?: string;
-  };
-  status?: string;
-  code?: string;
-  title?: string;
-  detail?: string;
+    about?: string
+  }
+  status?: string
+  code?: string
+  title?: string
+  detail?: string
   source?: {
-    pointer?: string;
-    parameter?: string;
-  };
-  meta?: any;
+    pointer?: string
+    parameter?: string
+  }
+  meta?: any
 
   constructor(obj: IJsonApiError) {
-    super();
-    Object.assign(this, obj);
+    super()
+    Object.assign(this, obj)
   }
 
   static from(err: Error): JsonApiError {
@@ -70,12 +70,12 @@ export class JsonApiError extends Error implements IJsonApiError {
         meta: {
           stack: err.stack,
         },
-      });
+      })
     } else if (err instanceof MongooseError.ValidatorError) {
       return new JsonApiError.InvalidAttribute(
         err.path,
         err.message,
-      );
+      )
     } else {
       return new JsonApiError({
         status: '500',
@@ -84,7 +84,7 @@ export class JsonApiError extends Error implements IJsonApiError {
         meta: {
           stack: err.stack,
         },
-      });
+      })
     }
   }
 
@@ -98,7 +98,7 @@ export class JsonApiError extends Error implements IJsonApiError {
       detail: this.detail,
       source: this.source,
       meta: this.meta,
-    };
+    }
   }
 
 
@@ -107,7 +107,7 @@ export class JsonApiError extends Error implements IJsonApiError {
       super({
         status: '403',
         title: 'Permission denied',
-      });
+      })
     }
   }
 
@@ -144,8 +144,8 @@ export class JsonApiError extends Error implements IJsonApiError {
   static InvalidAttribute = class extends JsonApiError {
     constructor(attribute: string, message: string) {
       super({
-        status: "400",
-        title: "Invalid attribute",
+        status: '400',
+        title: 'Invalid attribute',
         detail: message,
         source: {
           pointer: `/data/attributes/${attribute}`
