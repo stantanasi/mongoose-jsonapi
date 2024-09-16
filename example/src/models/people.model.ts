@@ -1,5 +1,5 @@
 import MongooseJsonApi, { JsonApiInstanceMethods, JsonApiModel, JsonApiQueryHelper } from '@stantanasi/mongoose-jsonapi'
-import { HydratedDocument, model, Model, Schema, Types } from 'mongoose'
+import mongoose, { HydratedDocument, Model, Schema, Types } from 'mongoose'
 import { TArticle } from './article.model'
 import { TComment } from './comment.model'
 
@@ -67,5 +67,5 @@ PeopleSchema.plugin(MongooseJsonApi, {
 
 export type TPeople = HydratedDocument<IPeople, PeopleInstanceMethods, PeopleQueryHelper>
 
-const People = model<IPeople, PeopleModel>('People', PeopleSchema)
+const People = mongoose.model<IPeople, PeopleModel>('People', PeopleSchema)
 export default People
