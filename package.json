@@ -7,6 +7,15 @@
   "scripts": {
     "build": "tsc"
   },
+  "keywords": [
+    "mongoose",
+    "jsonapi",
+    "plugin",
+    "mongoose-plugin",
+    "mongodb",
+    "api",
+    "typescript"
+  ],
   "repository": "https://github.com/stantanasi/mongoose-jsonapi",
   "author": "stantanasi",
   "license": "ISC",
