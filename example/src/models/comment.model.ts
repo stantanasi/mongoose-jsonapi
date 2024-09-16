@@ -15,13 +15,13 @@ export interface IComment {
   updatedAt: Date
 }
 
-export interface CommentInstanceMethods extends JsonApiInstanceMethods { }
+export type CommentInstanceMethods = JsonApiInstanceMethods
 
-export interface CommentQueryHelper extends JsonApiQueryHelper { }
+export type CommentQueryHelper = JsonApiQueryHelper
 
-export interface CommentModel extends Model<IComment, CommentQueryHelper, CommentInstanceMethods> { }
+export type CommentModel = Model<IComment, CommentQueryHelper, CommentInstanceMethods> & JsonApiModel<IComment>
 
-export const CommentSchema = new Schema<IComment, CommentModel & JsonApiModel<IComment>, CommentInstanceMethods, CommentQueryHelper>({
+export const CommentSchema = new Schema<IComment, CommentModel, CommentInstanceMethods, CommentQueryHelper>({
   body: {
     type: String,
     required: true,
@@ -56,5 +56,5 @@ CommentSchema.plugin(MongooseJsonApi, {
 
 export type TComment = HydratedDocument<IComment, CommentInstanceMethods, CommentQueryHelper>
 
-const Comment = model<IComment, CommentModel & JsonApiModel<IComment>>('Comment', CommentSchema)
+const Comment = model<IComment, CommentModel>('Comment', CommentSchema)
 export default Comment

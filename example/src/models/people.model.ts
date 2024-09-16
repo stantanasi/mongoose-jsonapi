@@ -17,13 +17,13 @@ export interface IPeople {
   updatedAt: Date
 }
 
-export interface PeopleInstanceMethods extends JsonApiInstanceMethods { }
+export type PeopleInstanceMethods = JsonApiInstanceMethods
 
-export interface PeopleQueryHelper extends JsonApiQueryHelper { }
+export type PeopleQueryHelper = JsonApiQueryHelper
 
-export interface PeopleModel extends Model<IPeople, PeopleQueryHelper, PeopleInstanceMethods> { }
+export type PeopleModel = Model<IPeople, PeopleQueryHelper, PeopleInstanceMethods> & JsonApiModel<IPeople>
 
-export const PeopleSchema = new Schema<IPeople, PeopleModel & JsonApiModel<IPeople>, PeopleInstanceMethods, PeopleQueryHelper>({
+export const PeopleSchema = new Schema<IPeople, PeopleModel, PeopleInstanceMethods, PeopleQueryHelper>({
   firstName: {
     type: String,
     required: true,
@@ -67,5 +67,5 @@ PeopleSchema.plugin(MongooseJsonApi, {
 
 export type TPeople = HydratedDocument<IPeople, PeopleInstanceMethods, PeopleQueryHelper>
 
-const People = model<IPeople, PeopleModel & JsonApiModel<IPeople>>('People', PeopleSchema)
+const People = model<IPeople, PeopleModel>('People', PeopleSchema)
 export default People

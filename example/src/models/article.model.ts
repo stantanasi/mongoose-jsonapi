@@ -15,13 +15,13 @@ export interface IArticle {
   updatedAt: Date
 }
 
-export interface ArticleInstanceMethods extends JsonApiInstanceMethods { }
+export type ArticleInstanceMethods = JsonApiInstanceMethods
 
-export interface ArticleQueryHelper extends JsonApiQueryHelper { }
+export type ArticleQueryHelper = JsonApiQueryHelper
 
-export interface ArticleModel extends Model<IArticle, ArticleQueryHelper, ArticleInstanceMethods> { }
+export type ArticleModel = Model<IArticle, ArticleQueryHelper, ArticleInstanceMethods> & JsonApiModel<IArticle>
 
-export const ArticleSchema = new Schema<IArticle, ArticleModel & JsonApiModel<IArticle>, ArticleInstanceMethods, ArticleQueryHelper>({
+export const ArticleSchema = new Schema<IArticle, ArticleModel, ArticleInstanceMethods, ArticleQueryHelper>({
   title: {
     type: String,
     required: true,
@@ -56,5 +56,5 @@ ArticleSchema.plugin(MongooseJsonApi, {
 
 export type TArticle = HydratedDocument<IArticle, ArticleInstanceMethods, ArticleQueryHelper>
 
-const Article = model<IArticle, ArticleModel & JsonApiModel<IArticle>>('Article', ArticleSchema)
+const Article = model<IArticle, ArticleModel>('Article', ArticleSchema)
 export default Article
