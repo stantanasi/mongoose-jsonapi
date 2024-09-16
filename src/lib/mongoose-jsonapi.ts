@@ -6,7 +6,7 @@ import { JsonApiError } from './jsonapi-error';
 export interface JsonApiModel<T> extends Model<T, JsonApiQueryHelper, JsonApiInstanceMethods> {
   fromJsonApi: (
     this: JsonApiModel<T>,
-    body: JsonApiBody,
+    body: JsonApiBody<JsonApiResource>,
   ) => HydratedDocument<T, JsonApiInstanceMethods>;
 }
 
@@ -16,7 +16,7 @@ export interface JsonApiInstanceMethods extends Document {
       baseUrl: string;
       meta?: Record<string, any>;
     },
-  ) => JsonApiBody;
+  ) => JsonApiBody<JsonApiResource>;
 
   merge: (...sources: (Record<string, any> | Document)[]) => this;
 }
@@ -72,17 +72,23 @@ export interface JsonApiQueryHelper {
       baseUrl: string;
       meta?: any;
     },
-  ) => QueryWithHelpers<JsonApiBody, DocType, THelpers, RawDocType, QueryOp, TInstanceMethods>;
+  ) => QueryWithHelpers<
+    JsonApiBody<ResultType extends Array<DocType> ? JsonApiResource[] : (JsonApiResource | null)>,
+    DocType,
+    THelpers,
+    RawDocType,
+    QueryOp,
+    TInstanceMethods
+  >;
 
   paginate: <
-    ResultType extends JsonApiBody,
     DocType extends JsonApiInstanceMethods,
     THelpers extends JsonApiQueryHelper,
     TInstanceMethods extends JsonApiInstanceMethods,
     RawDocType = DocType,
     QueryOp = 'find',
   >(
-    this: QueryWithHelpers<ResultType, DocType, THelpers, RawDocType, QueryOp, TInstanceMethods>,
+    this: QueryWithHelpers<JsonApiBody<JsonApiResource[]>, DocType, THelpers, RawDocType, QueryOp, TInstanceMethods>,
     opts: {
       url: string;
       query: JsonApiQueryParams;
@@ -331,7 +337,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
     }
 
     return this.transform((doc) => {
-      const body: JsonApiBody = {
+      const body: JsonApiBody<any> = {
         jsonapi: {
           version: '1.0',
         },
@@ -448,7 +454,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
 
 
   schema.methods.toJsonApi = function (opts) {
-    const body: JsonApiBody = {
+    const body: JsonApiBody<JsonApiResource> = {
       jsonapi: {
         version: '1.0',
       },

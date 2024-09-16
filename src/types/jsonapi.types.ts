@@ -14,11 +14,11 @@ export interface JsonApiQueryParams {
 }
 
 
-export interface JsonApiBody {
+export interface JsonApiBody<DataType extends JsonApiResource | JsonApiResource[] | null = JsonApiResource | JsonApiResource[] | null> {
   jsonapi?: {
     version: string;
   };
-  data?: JsonApiResource | JsonApiResource[] | null;
+  data?: DataType;
   included?: JsonApiResource[];
   meta?: {
     count: number;
