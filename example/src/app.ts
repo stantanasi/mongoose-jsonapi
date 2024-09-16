@@ -5,6 +5,7 @@ import express, { NextFunction, Request, Response } from 'express'
 import { connect } from 'mongoose'
 import articleRoutes from './routes/article.routes'
 import commentRoutes from './routes/comment.routes'
+import peopleRoutes from './routes/people.routes'
 
 dotenv.config()
 
@@ -28,6 +29,7 @@ app.use(async (_req, _res, next) => {
 
 app.use('/articles', articleRoutes)
 app.use('/comments', commentRoutes)
+app.use('/peoples', peopleRoutes)
 
 app.all('*', (req, _res) => {
   throw new JsonApiError.RouteNotFoundError(req.path)
