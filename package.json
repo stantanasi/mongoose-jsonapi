@@ -1,6 +1,6 @@
 {
   "name": "@stantanasi/mongoose-jsonapi",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Mongoose plugin to support JSON:API specification",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
