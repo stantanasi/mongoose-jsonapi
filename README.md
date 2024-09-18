@@ -131,6 +131,16 @@ Please refer to the [example](./example/README.md) folder to see how to use it i
 
 ## API
 
+<!-- no toc -->
+- [MongooseJsonApi()](#mongoosejsonapi)
+- [Model.fromJsonApi()](#modelfromjsonapi)
+- [Document.prototype.toJsonApi()](#documentprototypetojsonapi)
+- [Document.prototype.merge()](#documentprototypemerge)
+- [Query.prototype.getRelationship()](#queryprototypegetrelationship)
+- [Query.prototype.withJsonApi()](#queryprototypewithjsonapi)
+- [Query.prototype.toJsonApi()](#queryprototypetojsonapi)
+- [Query.prototype.paginate()](#queryprototypepaginate)
+
 ### MongooseJsonApi()
 
 **Parameters:**
