@@ -4,6 +4,18 @@ A Mongoose plugin to support [JSON:API](https://jsonapi.org) specification
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/stantanasi)
 
+### Features
+
+- JSON:API v1.0 specification
+- **Inclusion of Related Resources**
+- **Sparse Fieldsets**
+- **Sorting**
+- **Pagination**
+- **Filtering**
+- **Error handling**
+- Serialize Mongoose Model to JSON:API resource
+- Deserialize JSON:API resource to Mongoose Model
+
 ## Installation
 
 ```bash
