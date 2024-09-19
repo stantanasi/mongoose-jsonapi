@@ -146,12 +146,27 @@ Please refer to the [example](./example/README.md) folder to see how to use it i
 **Parameters:**
 
 - `type` «String» - The JSON:API resource type for the model
+- `[filter]` «Object» - The JSON:API custom filtering
 
 #### Example
 
 ```typescript
 ArticleSchema.plugin(MongooseJsonApi, {
   type: 'articles',
+})
+
+// GET /articles?filter[search]=...
+ArticleSchema.plugin(MongooseJsonApi, {
+  type: "articles",
+  filter: {
+    search: (query: string) => {
+      return {
+        body : {
+          $regex : query,
+        },
+      }
+    },
+  },
 })
 ```
 
@@ -323,7 +338,7 @@ const articles = await Article.find()
     baseUrl: 'http://localhost:5000'
   })
 
-articles.data?.[0].attributes.title // 'Rails is Omakase'
+articles.data[0].attributes.title // 'Rails is Omakase'
 ```
 
 ### Query.prototype.paginate()
