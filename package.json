@@ -4,6 +4,10 @@
   "description": "A Mongoose plugin to support JSON:API specification",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "build": "tsc"
   },
