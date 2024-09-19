@@ -97,14 +97,16 @@ export interface JsonApiQueryHelper {
 }
 
 
+type MongooseJsonApiOptions<DocType> = {
+  type: string
+  filter?: {
+    [field: string]: (value: string) => FilterQuery<DocType>
+  }
+}
+
 export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>>(
   _schema: Schema<DocType, M>,
-  options: {
-    type: string
-    filter?: {
-      [field: string]: (value: string) => FilterQuery<DocType>
-    }
-  },
+  options: MongooseJsonApiOptions<DocType>,
 ) {
   const schema = _schema as Schema<DocType, M, JsonApiInstanceMethods, JsonApiQueryHelper, {}, JsonApiModel<DocType>>
 
