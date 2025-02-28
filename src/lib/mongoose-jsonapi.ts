@@ -10,7 +10,7 @@ export interface JsonApiModel<T> extends Model<T, JsonApiQueryHelper, JsonApiIns
   ) => HydratedDocument<T, JsonApiInstanceMethods>
 }
 
-export interface JsonApiInstanceMethods extends Document {
+export interface JsonApiInstanceMethods {
   toJsonApi: (
     opts: {
       baseUrl: string
@@ -24,13 +24,13 @@ export interface JsonApiInstanceMethods extends Document {
 export interface JsonApiQueryHelper {
   getRelationship: <
     P extends keyof RawDocType,
-    DocType extends JsonApiInstanceMethods,
+    DocType extends Document & JsonApiInstanceMethods,
     THelpers extends JsonApiQueryHelper,
     TInstanceMethods extends JsonApiInstanceMethods,
     ResultType extends Exclude<RawDocType[P], string | string[] | Types.ObjectId | Types.ObjectId[] | undefined>,
     ResultDocType extends JsonApiInstanceMethods,
-    ResultTHelpers extends JsonApiQueryHelper,
-    ResultTInstanceMethods extends JsonApiInstanceMethods,
+    ResultTHelpers = ResultType extends Document<any, infer Q, any> ? Q : JsonApiQueryHelper,
+    ResultTInstanceMethods extends JsonApiInstanceMethods = JsonApiInstanceMethods,
     RawDocType = DocType,
     QueryOp = 'find',
     ResultRawDocType = ResultDocType,
