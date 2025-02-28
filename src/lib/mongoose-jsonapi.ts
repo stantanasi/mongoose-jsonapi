@@ -24,7 +24,14 @@ export interface JsonApiInstanceMethods {
 type ExtractDocument<T> = T extends Array<infer U>
   ? U extends Document<infer U, infer QH, infer I> ? Document<U, QH, I> : never
   : T extends Document<infer U, infer QH, infer I> ? Document<U, QH, I> : never;
-type ExtractQueryHelper<T> = ExtractDocument<T> extends Document<any, infer Q, any> ? Q : any
+
+type ExtractQueryHelper<T> = ExtractDocument<T> extends Document<any, infer Q, any>
+  ? Q
+  : any;
+
+type ExtractInstanceMethods<T> = NonNullable<T> extends Array<infer U>
+  ? Omit<NonNullable<U>, keyof (NonNullable<U> extends HydratedDocument<infer DocType, unknown, infer TQueryHelpers> ? HydratedDocument<DocType, {}, TQueryHelpers> : {})>
+  : Omit<NonNullable<T>, keyof (NonNullable<T> extends HydratedDocument<infer DocType, unknown, infer TQueryHelpers> ? HydratedDocument<DocType, {}, TQueryHelpers> : {})>;
 
 export interface JsonApiQueryHelper {
   getRelationship: <
@@ -33,9 +40,9 @@ export interface JsonApiQueryHelper {
     THelpers extends JsonApiQueryHelper,
     TInstanceMethods extends JsonApiInstanceMethods,
     ResultType extends Exclude<RawDocType[P], string | string[] | Types.ObjectId | Types.ObjectId[] | undefined>,
-    ResultDocType extends JsonApiInstanceMethods,
+    ResultDocType = ExtractInstanceMethods<ResultType>,
     ResultTHelpers = ExtractQueryHelper<ResultType>,
-    ResultTInstanceMethods extends JsonApiInstanceMethods = JsonApiInstanceMethods,
+    ResultTInstanceMethods = ExtractInstanceMethods<ResultType>,
     RawDocType = DocType,
     QueryOp = 'find',
     ResultRawDocType = ResultDocType,
