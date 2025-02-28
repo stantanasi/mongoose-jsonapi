@@ -434,7 +434,7 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
       },
     }
 
-    const obj: any = this.toObject()
+    const obj: any = this.toObject({ flattenMaps: true })
 
     const type = options.type
     const id = this._id?.toString()
