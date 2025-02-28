@@ -21,9 +21,10 @@ export interface JsonApiInstanceMethods {
   merge: (...sources: (Record<string, any> | Document)[]) => this
 }
 
-type ExtractQueryHelper<T> = T extends Array<infer U>
-  ? U extends Document<any, infer Q, any> ? Q : JsonApiQueryHelper
-  : T extends Document<any, infer Q, any> ? Q : JsonApiQueryHelper
+type ExtractDocument<T> = T extends Array<infer U>
+  ? U extends Document<infer U, infer QH, infer I> ? Document<U, QH, I> : never
+  : T extends Document<infer U, infer QH, infer I> ? Document<U, QH, I> : never;
+type ExtractQueryHelper<T> = ExtractDocument<T> extends Document<any, infer Q, any> ? Q : any
 
 export interface JsonApiQueryHelper {
   getRelationship: <
