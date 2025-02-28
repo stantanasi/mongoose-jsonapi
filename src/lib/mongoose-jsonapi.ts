@@ -21,6 +21,10 @@ export interface JsonApiInstanceMethods {
   merge: (...sources: (Record<string, any> | Document)[]) => this
 }
 
+type ExtractQueryHelper<T> = T extends Array<infer U>
+  ? U extends Document<any, infer Q, any> ? Q : JsonApiQueryHelper
+  : T extends Document<any, infer Q, any> ? Q : JsonApiQueryHelper
+
 export interface JsonApiQueryHelper {
   getRelationship: <
     P extends keyof RawDocType,
@@ -29,7 +33,7 @@ export interface JsonApiQueryHelper {
     TInstanceMethods extends JsonApiInstanceMethods,
     ResultType extends Exclude<RawDocType[P], string | string[] | Types.ObjectId | Types.ObjectId[] | undefined>,
     ResultDocType extends JsonApiInstanceMethods,
-    ResultTHelpers = ResultType extends Document<any, infer Q, any> ? Q : JsonApiQueryHelper,
+    ResultTHelpers = ExtractQueryHelper<ResultType>,
     ResultTInstanceMethods extends JsonApiInstanceMethods = JsonApiInstanceMethods,
     RawDocType = DocType,
     QueryOp = 'find',
