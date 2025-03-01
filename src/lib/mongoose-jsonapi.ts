@@ -32,9 +32,9 @@ export interface JsonApiInstanceMethods {
   merge: (...sources: (Record<string, any> | Document)[]) => this
 }
 
-type ExtractQueryHelper<T> = T extends Array<infer U>
-  ? U extends HydratedDocument<unknown, unknown, infer TQueryHelpers> ? TQueryHelpers : never
-  : T extends HydratedDocument<unknown, unknown, infer TQueryHelpers> ? TQueryHelpers : never;
+type ExtractQueryHelpers<T> = NonNullable<T> extends Array<infer U>
+  ? NonNullable<U> extends Document<unknown, infer TQueryHelpers, unknown> ? TQueryHelpers : {}
+  : NonNullable<T> extends Document<unknown, infer TQueryHelpers, unknown> ? TQueryHelpers : {};
 
 type ExtractInstanceMethods<T> = NonNullable<T> extends Array<infer U>
   ? Omit<NonNullable<U>, keyof (NonNullable<U> extends HydratedDocument<infer DocType, unknown, infer TQueryHelpers> ? HydratedDocument<DocType, {}, TQueryHelpers> : {})>
@@ -48,7 +48,7 @@ export interface JsonApiQueryHelper {
     TInstanceMethods extends JsonApiInstanceMethods,
     ResultType extends Exclude<RawDocType[P], string | string[] | Types.ObjectId | Types.ObjectId[] | undefined>,
     ResultDocType = ExtractInstanceMethods<ResultType>,
-    ResultTHelpers = ExtractQueryHelper<ResultType>,
+    ResultTHelpers = ExtractQueryHelpers<ResultType>,
     ResultTInstanceMethods = ExtractInstanceMethods<ResultType>,
     RawDocType = DocType,
     QueryOp = 'find',
