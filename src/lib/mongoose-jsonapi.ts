@@ -1,4 +1,15 @@
-import { Document, FilterQuery, HydratedDocument, Model, PopulateOptions, QueryWithHelpers, Schema, SchemaType, Types, VirtualType } from 'mongoose'
+import {
+  Document,
+  FilterQuery,
+  HydratedDocument,
+  Model,
+  PopulateOptions,
+  QueryWithHelpers,
+  Schema,
+  SchemaType,
+  Types,
+  VirtualType,
+} from 'mongoose'
 import { JsonApiBody, JsonApiQueryParams, JsonApiResource } from '../types/jsonapi.types'
 import UrlQuery from '../utils/url-query.utils'
 import { JsonApiError } from './jsonapi-error'
@@ -21,13 +32,9 @@ export interface JsonApiInstanceMethods {
   merge: (...sources: (Record<string, any> | Document)[]) => this
 }
 
-type ExtractDocument<T> = T extends Array<infer U>
-  ? U extends Document<infer U, infer QH, infer I> ? Document<U, QH, I> : never
-  : T extends Document<infer U, infer QH, infer I> ? Document<U, QH, I> : never;
-
-type ExtractQueryHelper<T> = ExtractDocument<T> extends Document<any, infer Q, any>
-  ? Q
-  : any;
+type ExtractQueryHelper<T> = T extends Array<infer U>
+  ? U extends HydratedDocument<unknown, unknown, infer TQueryHelpers> ? TQueryHelpers : never
+  : T extends HydratedDocument<unknown, unknown, infer TQueryHelpers> ? TQueryHelpers : never;
 
 type ExtractInstanceMethods<T> = NonNullable<T> extends Array<infer U>
   ? Omit<NonNullable<U>, keyof (NonNullable<U> extends HydratedDocument<infer DocType, unknown, infer TQueryHelpers> ? HydratedDocument<DocType, {}, TQueryHelpers> : {})>
