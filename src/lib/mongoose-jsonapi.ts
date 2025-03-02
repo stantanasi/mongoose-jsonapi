@@ -14,11 +14,16 @@ import { JsonApiBody, JsonApiQueryParams, JsonApiResource } from '../types/jsona
 import UrlQuery from '../utils/url-query.utils';
 import { JsonApiError } from './jsonapi-error';
 
-export interface JsonApiModel<T> extends Model<T, JsonApiQueryHelper, JsonApiInstanceMethods> {
-  fromJsonApi: (
-    this: JsonApiModel<T>,
+export interface JsonApiModel<DocType> {
+  fromJsonApi: <
+    TModelType extends Model<DocType> & JsonApiModel<DocType>,
+  > (
+    this: TModelType,
     body: JsonApiBody<JsonApiResource>,
-  ) => HydratedDocument<T, JsonApiInstanceMethods>
+    opts?: {
+      assignAttribute?: (doc: HydratedDocument<DocType>, key: string, value: any) => any
+    },
+  ) => this extends { new(...args: any[]): infer THydratedDocumentType } ? THydratedDocumentType : {};
 }
 
 export interface JsonApiInstanceMethods {
@@ -130,29 +135,36 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
   const schema = _schema as Schema<DocType, M, JsonApiInstanceMethods, JsonApiQueryHelper, {}, JsonApiModel<DocType>>
 
 
-  schema.statics.fromJsonApi = function (body) {
-    const doc: any = {}
+  schema.statics.fromJsonApi = function (body, opts) {
+    const doc = new this()
 
     if (body.data?.id) {
       doc._id = body.data.id
     }
 
     if (body.data?.attributes) {
-      Object.assign(doc, body.data.attributes)
-    }
-
-    if (body.data?.relationships) {
-      Object.entries(body.data.relationships)
-        .forEach(([key, value]) => {
-          if (Array.isArray(value.data)) {
-            doc[key] = value.data.map((d) => d.id)
-          } else if (value.data) {
-            doc[key] = value.data.id
+      Object.entries(body.data.attributes)
+        .forEach(([attribute, value]) => {
+          if (opts?.assignAttribute) {
+            opts.assignAttribute(doc, attribute, value)
+          } else {
+            doc.set(attribute, value)
           }
         })
     }
 
-    return new this(doc)
+    if (body.data?.relationships) {
+      Object.entries(body.data.relationships)
+        .forEach(([relationship, value]) => {
+          if (Array.isArray(value.data)) {
+            doc.set(relationship, value.data.map((d) => d.id))
+          } else if (value.data) {
+            doc.set(relationship, value.data.id)
+          }
+        })
+    }
+
+    return doc
   }
 
   schema.query.getRelationship = function (relationship) {
