@@ -9,10 +9,10 @@ import {
   SchemaType,
   Types,
   VirtualType,
-} from 'mongoose'
-import { JsonApiBody, JsonApiQueryParams, JsonApiResource } from '../types/jsonapi.types'
-import UrlQuery from '../utils/url-query.utils'
-import { JsonApiError } from './jsonapi-error'
+} from 'mongoose';
+import { JsonApiBody, JsonApiQueryParams, JsonApiResource } from '../types/jsonapi.types';
+import UrlQuery from '../utils/url-query.utils';
+import { JsonApiError } from './jsonapi-error';
 
 export interface JsonApiModel<T> extends Model<T, JsonApiQueryHelper, JsonApiInstanceMethods> {
   fromJsonApi: (
@@ -547,24 +547,22 @@ export default function MongooseJsonApi<DocType, M extends JsonApiModel<DocType>
   }
 
   schema.methods.merge = function (...sources) {
-    sources = sources.map((source) => {
-      if (source instanceof Document) {
-        return source.directModifiedPaths().reduce((acc, cur) => {
-          cur.split('.').reduce((obj, path, i, arr) => {
-            if (i !== arr.length - 1) {
-              return obj[path] = {}
-            } else {
-              return obj[path] = source.get(cur)
-            }
-          }, acc)
-          return acc
-        }, {} as any)
+    const isDocument = (source: any): source is Document => {
+      return source?.directModifiedPaths && source?.get
+    }
 
+    sources.forEach((source) => {
+      if (source instanceof Document || isDocument(source)) {
+        source.directModifiedPaths().forEach((path) => {
+          this.set(path, source.get(path));
+        });
       } else {
-        return source
+        Object.entries(source).forEach(([key, value]) => {
+          this.set(key, value);
+        })
       }
     })
 
-    return Object.assign(this, ...sources)
+    return this;
   }
 }
