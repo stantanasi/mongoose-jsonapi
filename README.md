@@ -24,9 +24,9 @@ npm install @stantanasi/mongoose-jsonapi
 
 ## Usage
 
-Add plugin to a schema
+### Add plugin to a schema
 
-### JavaScript
+#### JavaScript
 
 ```javascript
 import MongooseJsonApi from '@stantanasi/mongoose-jsonapi'
@@ -46,7 +46,7 @@ ArticleSchema.plugin(MongooseJsonApi, {
 const Article = mongoose.model('Article', ArticleSchema)
 ```
 
-### TypeScript
+#### TypeScript
 
 ```typescript
 import MongooseJsonApi, { JsonApiInstanceMethods, JsonApiModel, JsonApiQueryHelper } from '@stantanasi/mongoose-jsonapi'
@@ -80,7 +80,7 @@ type TArticle = HydratedDocument<IArticle, ArticleInstanceMethods, ArticleQueryH
 const Article = mongoose.model<IArticle, ArticleModel>('Article', ArticleSchema)
 ```
 
-Use methods
+### Use methods
 
 ```typescript
 const body = {
