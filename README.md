@@ -157,8 +157,8 @@ Please refer to the [example](./example/README.md) folder to see how to use it i
 
 **Parameters:**
 
-- `type` «String» - The JSON:API resource type for the model
-- `[filter]` «Object» - The JSON:API custom filtering
+- `type`: *string* - The JSON:API resource type for the model
+- `[filter]`: *object* - The JSON:API custom filtering
 
 #### Example
 
@@ -186,11 +186,11 @@ ArticleSchema.plugin(MongooseJsonApi, {
 
 **Parameters:**
 
-- `body` «JsonApiBody» - The JSON:API request body
+- `body`: *JsonApiBody* - The JSON:API request body
 
 **Returns:**
 
-- «Document» - The Mongoose Document
+- *Document* - The Mongoose Document
 
 #### Example
 
@@ -212,13 +212,13 @@ article.title // 'JSON:API paints my bikeshed!'
 
 **Parameters:**
 
-- `opts` «Object» - Options
-  - `opts.baseUrl` «String» - The base URL used in JSON:API links object
-  - `[opts.meta]` «Object» - The meta information to include in the JSON:API response body
+- `opts`: *object* - Options
+  - `opts.baseUrl`: *string* - The base URL used in JSON:API links object
+  - `[opts.meta]`: *object* - The meta information to include in the JSON:API response body
 
 **Returns:**
 
-- «JsonApiBody» - The JSON:API response body
+- *JsonApiBody* - The JSON:API response body
 
 #### Example
 
@@ -238,11 +238,11 @@ body.data.attributes.title // 'JSON:API paints my bikeshed!'
 
 **Parameters:**
 
-- `sources` «Object | Document» - One or more source objects or documents containing the properties to be applied
+- `sources`: *object | Document* - One or more source objects or documents containing the properties to be applied
 
 **Returns:**
 
-- «Document» - The Mongoose Document
+- *Document* - The Mongoose Document
 
 #### Example
 
@@ -271,11 +271,11 @@ people.lastName // 'Doe'
 
 **Parameters:**
 
-- `relationship` «String» - The name of the relationship to retrieve
+- `relationship`: *string* - The name of the relationship to retrieve
 
 **Returns:**
 
-- «Document | Document[]» - The related Mongoose document(s)
+- *Document | Document[]* - The related Mongoose document(s)
 
 #### Example
 
@@ -301,11 +301,11 @@ author.lastName // 'Doe'
 
 **Parameters:**
 
-- `query` «JsonApiQueryParams» - The JSON:API Query Parameters
+- `query`: *JsonApiQueryParams* - The JSON:API Query Parameters
 
 **Returns:**
 
-- «Query» - The Mongoose Query
+- *Query* - The Mongoose Query
 
 #### Example
 
@@ -329,13 +329,13 @@ articles[0].title // 'JSON:API paints my bikeshed!'
 
 **Parameters:**
 
-- `opts` «Object» - Options
-  - `opts.baseUrl` «String» - The base URL used in JSON:API links object
-  - `[opts.meta]` «Object» - The meta information to include in the JSON:API response body
+- `opts`: *object* - Options
+  - `opts.baseUrl`: *string* - The base URL used in JSON:API links object
+  - `[opts.meta]`: *object* - The meta information to include in the JSON:API response body
 
 **Returns:**
 
-- «Query» - The Mongoose Query
+- *Query* - The Mongoose Query
 
 #### Example
 
@@ -357,13 +357,13 @@ articles.data[0].attributes.title // 'Rails is Omakase'
 
 **Parameters:**
 
-- `opts` «Object» - Options
-  - `opts.url` «String» - The current URL without query parameters
-  - `opts.query` «JsonApiQueryParams» - The current JSON:API Query Parameters
+- `opts`: *object* - Options
+  - `opts.url`: *string* - The current URL without query parameters
+  - `opts.query`: *JsonApiQueryParams* - The current JSON:API Query Parameters
 
 **Returns:**
 
-- «Query» - The Mongoose Query
+- *Query* - The Mongoose Query
 
 #### Example
 
